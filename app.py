@@ -69,6 +69,7 @@ class FlaskApp:
         #         'status': 'failed'
         #     })
 
+
     def reservations(self):
         try:
             user_id = self.app.session['user_id']
