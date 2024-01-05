@@ -1,4 +1,5 @@
-import .db from db
+# from db import Database
+from .db import Database
 
 class ReservationRepository:
     def getReservationsToday():

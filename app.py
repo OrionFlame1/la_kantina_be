@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from controller.UserController import UserController
@@ -11,6 +13,7 @@ class FlaskApp:
         self.setup_routes()
         CORS(self.app, supports_credentials=True)
         self.app.session = {}
+        self.app.run(debug=(os.getenv("ENVIRONMENT") != "PRODUCTION"), host="0.0.0.0", port=5000)
 
     def configs(self):
         self.app.config.update(
@@ -84,9 +87,9 @@ class FlaskApp:
 
 
 if __name__ == '__main__':
+    load_dotenv()
     app_name = "La Kantina"
-    flask_app = FlaskApp(app_name)
-    flask_app.app.run()
+    flask_app = FlaskApp(__name__)
 
 
 # load_dotenv()
