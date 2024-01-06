@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from controller.UserController import UserController
 from controller.ReservationController import ReservationController
@@ -33,56 +33,62 @@ class FlaskApp:
         # self.app.add_url_rule('/register', 'register', self.register)
         #
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
+        self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
         # self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
         # self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel)
         # self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival)
         #
         # self.app.add_url_rule('/table/<id>', 'table', self.table)
 
+    """
+    {
+    "email": "adi@company.com",
+    "password": "admin1"
+    }
+    """
     def login(self):
         data = request.get_json()
         login_status = UserController.login(data)
-        user_id = login_status
-        if user_id:
-            self.app.session['user_id'] = user_id
-        return jsonify(login_status)
-
-        # email = data['email']
-        # password = data['password']
-        #
-        # user = validateLoginData(email, password)
-        # if user:
-        #     session['user_id'] = user[0]
-        #     resp = make_response(
-        #         jsonify(
-        #             {
-        #                 'status': 'success',
-        #                 'id': user[0],
-        #                 'name': user[1],
-        #                 'email': user[2],
-        #                 'type': user[4],
-        #                 'points': user[5]
-        #             }
-        #         )
-        #     )
-        #     resp.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
-        #     return resp
-        # else:
-        #     return jsonify({
-        #         'status': 'failed'
-        #     })
+        if isinstance(login_status, int):
+            self.app.session['user_id'] = login_status
+            resp = make_response(
+                jsonify(
+                    {
+                        'user_id': login_status
+                    }
+                )
+            )
+            resp.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
+        else:
+            resp = jsonify({
+                'message': login_status
+            })
+        return resp
 
 
     def reservations(self):
-        try:
-            user_id = self.app.session['user_id']
+        if 'user_id' in self.app.session:
+            reservations = ReservationController.getReservations()
             return jsonify({
-                'status': 'success',
-                'user_id': user_id
+                'reservations': reservations
             })
-        except:
+        else:
             return jsonify({
-                'status': 'failed'
+                'message': 'You are not logged in'
+            })
+
+
+
+    def reservations_make(self):
+        if 'user_id' in self.app.session:
+            data = request.get_json()
+            reservation = ReservationController.createReservation(data)
+            return jsonify({
+                'reservation': reservation
+            })
+        else:
+            return jsonify({
+                'message': 'You are not logged in'
             })
 
 

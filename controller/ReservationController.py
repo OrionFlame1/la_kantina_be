@@ -1,5 +1,8 @@
 from .service.ReservationService import ReservationService
 
 class ReservationController:
-    def getReservations(self):
+    def getReservations():
         return ReservationService.getReservationsToday()
+
+    def createReservation(data):
+        return ReservationService.createReservation(data)
