@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS la_kantina.accounts (
+CREATE TABLE IF NOT EXISTS accounts (
   `id` integer NOT NULL AUTO_INCREMENT,
   `name` varchar(255),
   `email` varchar(255),
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS la_kantina.accounts (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS la_kantina.reservations (
+CREATE TABLE IF NOT EXISTS reservations (
   `id` integer NOT NULL AUTO_INCREMENT,
   `account_id` integer,
   `table_id` integer,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS la_kantina.reservations (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS la_kantina.tables (
+CREATE TABLE IF NOT EXISTS tables (
   `id` integer NOT NULL AUTO_INCREMENT COMMENT 'static table, used only to store tables and slots',
   `slots` integer,
   `x` integer,
