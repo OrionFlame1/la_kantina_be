@@ -8,6 +8,15 @@ class ReservationService:
         def createReservation(data):
             return ReservationRepository.createReservation(data)
 
+        def cancelReservation(reservation_id):
+            return ReservationRepository.updateReservationStatus(reservation_id, status='cancelled')
+
+        def confirmArrival(reservation_id):
+            return ReservationRepository.updateReservationStatus(reservation_id, status='confirmed_arrival')
+
+        def completeReservation(reservation_id):
+            return ReservationRepository.updateReservationStatus(reservation_id, status='completed')
+
         # def getReservationsByDate(date):
         #     return ReservationRepository.getReservationsByDate(date)
         #

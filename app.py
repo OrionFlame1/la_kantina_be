@@ -35,8 +35,9 @@ class FlaskApp:
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
         self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
         # self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
-        # self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel)
-        # self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival)
+        self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel, methods=['POST'])
+        self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival, methods=['POST'])
+        self.app.add_url_rule('/reservations/complete/<reservation_id>', 'res_complete', self.reservations_complete, methods=['POST'])
         #
         # self.app.add_url_rule('/table/<id>', 'table', self.table)
 
@@ -83,6 +84,39 @@ class FlaskApp:
         if 'user_id' in self.app.session:
             data = request.get_json()
             reservation = ReservationController.createReservation(data)
+            return jsonify({
+                'reservation': reservation
+            })
+        else:
+            return jsonify({
+                'message': 'You are not logged in'
+            })
+
+    def reservations_cancel(self, reservation_id):
+        if 'user_id' in self.app.session:
+            reservation = ReservationController.cancelReservation(reservation_id)
+            return jsonify({
+                'reservation': reservation
+            })
+        else:
+            return jsonify({
+                'message': 'You are not logged in'
+            })
+
+    def reservations_confirm_arrival(self, reservation_id):
+        if 'user_id' in self.app.session:
+            reservation = ReservationController.confirmArrival(reservation_id)
+            return jsonify({
+                'reservation': reservation
+            })
+        else:
+            return jsonify({
+                'message': 'You are not logged in'
+            })
+
+    def reservations_complete(self, reservation_id):
+        if 'user_id' in self.app.session:
+            reservation = ReservationController.completeReservation(reservation_id)
             return jsonify({
                 'reservation': reservation
             })

@@ -15,10 +15,6 @@ class ReservationRepository:
     def createReservation(data):
         db = Database().mydb
         cursor = db.cursor()
-        # cursor.execute(f"SELECT * FROM reservations WHERE "
-        #                f"(start_at < CAST('{data['end_at']}' AS DATETIME) OR "
-        #                f"end_at > CAST('{data['start_at']}' AS DATETIME)) AND "
-        #                f"table_id = {data['table_id']}")
 
         # first check if there is already a reservation made in the same date and time for a specific table
         cursor.execute(f"SELECT * FROM reservations WHERE "
@@ -37,14 +33,23 @@ class ReservationRepository:
             cursor.close()
             db.close()
             return {'error': 1, 'message': "There is already a reservation made in the same date and time"}
-        # cursor.execute(f"INSERT INTO reservations SET "
-        #                f"account_id = '{data['user_id']}', "
-        #                f"table_id = '{data['table_id']}', "
-        #                f"start_at = '{data['start_at']}', "
-        #                f"end_at = '{data['end_at']}', "
-        #                f"status = 'pending', "
-        #                f"created_at = NOW()")
-        # db.commit()
+        cursor.execute(f"INSERT INTO reservations SET "
+                       f"account_id = '{data['user_id']}', "
+                       f"table_id = '{data['table_id']}', "
+                       f"start_at = '{data['start_at']}', "
+                       f"end_at = '{data['end_at']}', "
+                       f"status = 'pending', "
+                       f"created_at = NOW()")
+        db.commit()
         cursor.close()
         db.close()
         return {'error': 0, 'message': "Reservation created successfully"}
+
+    def updateReservationStatus(reservation_id, status):
+        db = Database().mydb
+        cursor = db.cursor()
+        cursor.execute(f"UPDATE reservations SET status = '{status}' WHERE id = {reservation_id}")
+        db.commit()
+        cursor.close()
+        db.close()
+        return {'error': 0, 'message': "Reservation updated successfully"}
