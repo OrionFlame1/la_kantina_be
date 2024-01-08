@@ -15,13 +15,23 @@ class ReservationRepository:
     def createReservation(data):
         db = Database().mydb
         cursor = db.cursor()
-        # first check if there is already a reservation made in the same date and time
-        sql = f"SELECT * FROM reservations WHERE (start_at < CAST('{data['end_at']}' AS DATETIME) OR end_at > CAST('{data['start_at']}' AS DATETIME)) AND table_id = {data['table_id']}"
-        print(sql)
+        # cursor.execute(f"SELECT * FROM reservations WHERE "
+        #                f"(start_at < CAST('{data['end_at']}' AS DATETIME) OR "
+        #                f"end_at > CAST('{data['start_at']}' AS DATETIME)) AND "
+        #                f"table_id = {data['table_id']}")
+
+        # first check if there is already a reservation made in the same date and time for a specific table
         cursor.execute(f"SELECT * FROM reservations WHERE "
-                       f"(start_at < CAST('{data['end_at']}' AS DATETIME) OR "
-                       f"end_at > CAST('{data['start_at']}' AS DATETIME)) AND "
-                       f"table_id = {data['table_id']}")
+                       f"( "
+                       f"   ( start_at < CAST('{data['start_at']}' AS DATETIME) " # reservation in the limits of other reservation
+                       f"   AND end_at > CAST('{data['end_at']}' AS DATETIME) "
+                       f") OR "
+                       f"   ( start_at > CAST('{data['start_at']}' AS DATETIME) " # reservation conflict with other reservation's upper limit
+                       f"   AND start_at < CAST('{data['end_at']}' AS DATETIME) "
+                       f") OR "
+                       f"   ( end_at > CAST('{data['start_at']}' AS DATETIME) " # reservation conflict with other reservation's lower limit
+                       f"   AND end_at < CAST('{data['end_at']}' AS DATETIME) ) "
+                       f") AND table_id = {data['table_id']}") # check for that specific table
         result = cursor.fetchall()
         if len(result) > 0:
             cursor.close()
