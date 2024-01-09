@@ -1,4 +1,5 @@
 from controller.service.repository.UserRepository import UserRepository
+from MailService import MailService
 
 
 class UserService:
@@ -12,3 +13,7 @@ class UserService:
         else:
             return result['foundUser']
             # return result['foundUser']['id']
+
+    def sendMail(data):
+        MailService.sendMail(data)
+        return "Mail sent"

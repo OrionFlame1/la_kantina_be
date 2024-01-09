@@ -31,15 +31,21 @@ class FlaskApp:
     def setup_routes(self):
         self.app.add_url_rule('/login', 'login', self.login, methods=['POST'])
         # self.app.add_url_rule('/register', 'register', self.register)
-        #
+
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
         self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
         # self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
         self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel, methods=['POST'])
         self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival, methods=['POST'])
         self.app.add_url_rule('/reservations/complete/<reservation_id>', 'res_complete', self.reservations_complete, methods=['POST'])
-        #
-        # self.app.add_url_rule('/table/<id>', 'table', self.table)
+        self.app.add_url_rule('/test_mail', 'test_mail', self.test_mail,  methods=['POST'])
+
+    def test_mail(self):
+        data = request.get_json()
+        UserController.sendMail(data)
+        return jsonify({
+            'message': 'Mail sent'
+        })
 
     """
     {
