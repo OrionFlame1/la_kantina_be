@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS reservations (
   `end_at` timestamp COMMENT 'optional, used to delimit reservation',
   `status` varchar(255) COMMENT 'pending, confirmed, active, cancelled',
   `feedback` integer COMMENT 'null until feedback arrives, 0 dislike, 1 like',
-  `created_at` timestamp COMMENT 'now()',
+  `created_at` timestamp DEFAULT now(),
   PRIMARY KEY (id)
 );
 
