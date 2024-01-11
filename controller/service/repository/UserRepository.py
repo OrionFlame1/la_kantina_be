@@ -3,6 +3,16 @@ import hashlib
 
 
 class UserRepository:
+
+    def isAdmin(self):
+        db = Database().mydb
+        cursor = db.cursor()
+        cursor.execute(f"SELECT type FROM accounts WHERE id = {self.app.session['user_id']}")
+        result = cursor.fetchone()
+        cursor.close()
+        db.close()
+        return result[0]
+
     def validateLogin(data):
         db = Database().mydb
         cursor = db.cursor()

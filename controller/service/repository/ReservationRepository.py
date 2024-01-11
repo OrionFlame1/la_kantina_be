@@ -5,6 +5,16 @@ class ReservationRepository:
     def getReservationsToday():
         db = Database().mydb
         cursor = db.cursor()
+        cursor.execute(f"SELECT * FROM reservations WHERE DATE(start_at) = CURDATE() ORDER BY created_at ASC")
+        result = cursor.fetchall()
+        result = [dict(zip([key[0] for key in cursor.description], row)) for row in result]
+        cursor.close()
+        db.close()
+        return result
+
+    def getAllReservations():
+        db = Database().mydb
+        cursor = db.cursor()
         cursor.execute(f"SELECT * FROM reservations ORDER BY created_at ASC")
         result = cursor.fetchall()
         result = [dict(zip([key[0] for key in cursor.description], row)) for row in result]
@@ -41,9 +51,11 @@ class ReservationRepository:
                        f"status = 'pending', "
                        f"created_at = NOW()")
         db.commit()
+        cursor.execute(f"SELECT email FROM accounts a JOIN reservations r WHERE a.id = r.account_id AND r.id = {cursor.lastrowid}")
+        email = cursor.fetchone()[0]
         cursor.close()
         db.close()
-        return {'error': 0, 'message': "Reservation created successfully"}
+        return {'error': 0, 'message': "Reservation created successfully", 'reservation_id': cursor.lastrowid, 'email': email}
 
     def updateReservationStatus(reservation_id, status):
         db = Database().mydb
