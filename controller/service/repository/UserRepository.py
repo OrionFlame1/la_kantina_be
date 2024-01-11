@@ -3,6 +3,17 @@ import hashlib
 
 
 class UserRepository:
+
+    def getUserById(id):
+        db = Database().mydb
+        cursor = db.cursor()
+
+        try:
+            cursor.execute(f"SELECT * FROM accounts WHERE id = {id}")
+            return cursor.fetchone()
+        except:
+            return None
+
     def validateLogin(data):
         db = Database().mydb
         cursor = db.cursor()
@@ -37,7 +48,6 @@ class UserRepository:
         cursor.close()
         db.close()
         return {'error': 0, 'message': "Account created successfully", 'id': result[0], 'email': result[1]}
-
 
     def confirmAccount(account_id):
         db = Database().mydb

@@ -32,6 +32,7 @@ class FlaskApp:
 
     def setup_routes(self):
         self.app.add_url_rule('/login', 'login', self.login, methods=['POST'])
+        self.app.add_url_rule('/me', 'me', self.me, methods=['GET'])
         self.app.add_url_rule('/register', 'register', self.register, methods=['POST'])
         self.app.add_url_rule('/confirm_account/<account_id>', 'confirm_account', self.confirm_account, methods=['POST', 'GET'])
 
@@ -76,6 +77,12 @@ class FlaskApp:
                 'message': login_status
             })
         return resp
+
+    def me(self):
+        if 'user_id' in self.app.session:
+            return UserController.me(self.app.session['user_id'])
+        else:
+            Response(status=401)
 
     def register(self):
         data = request.get_json()

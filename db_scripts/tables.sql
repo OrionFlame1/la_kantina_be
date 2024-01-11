@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS accounts (
   `email` varchar(255),
   `password` varchar(255),
   `type` varchar(255) COMMENT 'customer/admin/(waiter)',
-  `points` integer COMMENT 'fidelity points',
+  `points` integer DEFAULT 0 COMMENT 'fidelity points',
   PRIMARY KEY (id)
 );
 
