@@ -1,3 +1,5 @@
+from flask import jsonify
+
 from controller.service.UserService import UserService
 
 class UserController:
@@ -5,6 +7,9 @@ class UserController:
     def login(data):
         return UserService.findByEmail(data)
         # return data
+
+    def me(id):
+        return jsonify(UserService.getUserWithReservations(id, id))
 
     def test_mail(data):
         return UserService.sendMail(data)

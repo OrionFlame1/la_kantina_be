@@ -53,3 +53,13 @@ class ReservationRepository:
         cursor.close()
         db.close()
         return {'error': 0, 'message': "Reservation updated successfully"}
+
+
+    def getReservationsByUser(id):
+        db = Database().mydb
+        cursor = db.cursor()
+        try:
+            cursor.execute(f"SELECT * FROM reservations WHERE account_id = {id} AND end_at > now()")
+            return cursor.fetchall()
+        except:
+            return []

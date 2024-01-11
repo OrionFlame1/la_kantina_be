@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS accounts (
   `email` varchar(255),
   `password` varchar(255),
   `type` varchar(255) COMMENT 'customer/admin/(waiter)',
-  `points` integer COMMENT 'fidelity points',
+  `points` integer DEFAULT 0 COMMENT 'fidelity points',
   PRIMARY KEY (id)
 );
 
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS reservations (
   `end_at` timestamp COMMENT 'optional, used to delimit reservation',
   `status` varchar(255) COMMENT 'pending, confirmed, active, cancelled',
   `feedback` integer COMMENT 'null until feedback arrives, 0 dislike, 1 like',
-  `created_at` timestamp COMMENT 'now()',
+  `created_at` timestamp DEFAULT now(),
   PRIMARY KEY (id)
 );
 
