@@ -9,11 +9,20 @@ class MailService:
         self.mail = Mail(app)
         load_dotenv()
 
-    def send(self, to, subject, template):
+    def send(self, to, subject, body):
         msg = Message(
             subject,
             recipients=[to],
-            html=template,
-            sender=(os.getenv("MAIL_SENDER"), self.app.config['MAIL_USERNAME'])
+            body=body,
+            sender=(self.app.config['MAIL_USERNAME'])
+        )
+        self.mail.send(msg)
+
+    def sendAccountConfirmation(self, to, link):
+        msg = Message(
+            "Account Confirmation",
+            recipients=[to],
+            html=f"<h1>Click <a href='{link}'>here</a> to confirm your account</h1>",
+            sender=(self.app.config['MAIL_USERNAME'])
         )
         self.mail.send(msg)

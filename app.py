@@ -30,7 +30,8 @@ class FlaskApp:
 
     def setup_routes(self):
         self.app.add_url_rule('/login', 'login', self.login, methods=['POST'])
-        # self.app.add_url_rule('/register', 'register', self.register)
+        self.app.add_url_rule('/register', 'register', self.register, methods=['POST'])
+        self.app.add_url_rule('/confirm_account/<account_id>', 'confirm_account', self.confirm_account, methods=['POST', 'GET'])
 
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
         self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
@@ -72,7 +73,42 @@ class FlaskApp:
             })
         return resp
 
+    def register(self):
+        data = request.get_json()
+        register_status = UserController.register(self, data)
+        if isinstance(register_status, int):
+            self.app.session['user_id'] = register_status
+            resp = make_response(
+                jsonify(
+                    {
+                        'user_id': register_status
+                    }
+                )
+            )
+            resp.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
+        else:
+            resp = jsonify({
+                'message': register_status
+            })
+        return resp
 
+    def confirm_account(self, account_id):
+        confirm_status = UserController.confirmAccount(self, int(account_id))
+        if isinstance(confirm_status, int):
+            self.app.session['user_id'] = confirm_status
+            resp = make_response(
+                jsonify(
+                    {
+                        'user_id': confirm_status
+                    }
+                )
+            )
+            resp.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
+        else:
+            resp = jsonify({
+                'message': confirm_status
+            })
+        return resp
     def reservations(self):
         if 'user_id' in self.app.session:
             reservations = ReservationController.getReservations()
