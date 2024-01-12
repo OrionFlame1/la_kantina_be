@@ -66,3 +66,6 @@ class UserService:
             return result
         else:
             return result['message']
+
+    def isAdmin(self):
+        return UserRepository.isAdmin(self)

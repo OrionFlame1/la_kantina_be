@@ -1,12 +1,25 @@
 from .repository.ReservationRepository import ReservationRepository
+from .MailService import MailService
+import os
 
 class ReservationService:
 
         def getReservationsToday():
             return ReservationRepository.getReservationsToday()
 
-        def createReservation(data):
-            return ReservationRepository.createReservation(data)
+        def createReservation(self, data):
+            result = ReservationRepository.createReservation(data)
+            if result['error'] == 0:
+                url = os.getenv("BASE_URL")
+                link = url + "/reservations/confirm/" + str(result['reservation_id'])
+                email = result['email']
+                print(link)
+                mail = MailService(self.app).sendReservationConfirmation(email, link)
+                return result
+            return result
+
+        def confirmReservation(reservation_id):
+            return ReservationRepository.updateReservationStatus(reservation_id, status='confirmed')
 
         def cancelReservation(reservation_id):
             return ReservationRepository.updateReservationStatus(reservation_id, status='cancelled')
