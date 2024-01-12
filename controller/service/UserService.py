@@ -2,8 +2,40 @@ from controller.service.repository.UserRepository import UserRepository
 from .MailService import MailService
 import os
 
+from .repository.ReservationRepository import ReservationRepository
+
 
 class UserService:
+
+
+    def getUserWithReservations(id, sessionUserId):
+        user = UserRepository.getUserById(id)
+        if user is None or len(user) == 0:
+            return None
+
+        reservations = ReservationRepository.getReservationsByUser(id)
+        reservationsJSON = []
+        for reservation in reservations:
+            reservationsJSON.append({
+                "id": reservation[0],
+                "tableId": reservation[2],
+                "startDate": reservation[3],
+                "endDate": reservation[4],
+                "status": reservation[5]
+            })
+
+        if id == sessionUserId:
+            return {
+                "name": user[1],
+                "type": user[4],
+                "points": user[5],
+                "reservations": reservationsJSON
+            }
+        else:
+            return {
+                "name": user[1],
+                "reservations": reservationsJSON
+            }
 
     def findByEmail(data):
         result = UserRepository.validateLogin(data)

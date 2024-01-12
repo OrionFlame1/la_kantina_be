@@ -1,7 +1,9 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
+
+from controller.TableController import TableController
 from controller.UserController import UserController
 from controller.ReservationController import ReservationController
 
@@ -30,6 +32,7 @@ class FlaskApp:
 
     def setup_routes(self):
         self.app.add_url_rule('/login', 'login', self.login, methods=['POST'])
+        self.app.add_url_rule('/me', 'me', self.me, methods=['GET'])
         self.app.add_url_rule('/register', 'register', self.register, methods=['POST'])
         self.app.add_url_rule('/confirm_account/<account_id>', 'confirm_account', self.confirm_account, methods=['POST', 'GET'])
 
@@ -40,6 +43,8 @@ class FlaskApp:
         self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival, methods=['POST'])
         self.app.add_url_rule('/reservations/complete/<reservation_id>', 'res_complete', self.reservations_complete, methods=['POST'])
         self.app.add_url_rule('/test_mail', 'test_mail', self.test_mail,  methods=['POST'])
+
+        self.app.add_url_rule('/tables/<date>', 'get_tables', self.get_tables, methods=['GET'])
 
     def test_mail(self):
         data = request.get_json()
@@ -72,6 +77,12 @@ class FlaskApp:
                 'message': login_status
             })
         return resp
+
+    def me(self):
+        if 'user_id' in self.app.session:
+            return UserController.me(self.app.session['user_id'])
+        else:
+            Response(status=401)
 
     def register(self):
         data = request.get_json()
@@ -115,9 +126,8 @@ class FlaskApp:
                 'reservations': reservations
             })
         else:
-            return jsonify({
-                'message': 'You are not logged in'
-            })
+            Response(status=401)
+            
     def reservations_make(self):
         if 'user_id' in self.app.session:
             data = request.get_json()
@@ -126,9 +136,7 @@ class FlaskApp:
                 'reservation': reservation
             })
         else:
-            return jsonify({
-                'message': 'You are not logged in'
-            })
+            Response(status=401)
 
     def reservations_confirm(self, reservation_id):
         # confirm reservations only if it exists based on reservation_id
@@ -153,9 +161,7 @@ class FlaskApp:
                 'reservation': reservation
             })
         else:
-            return jsonify({
-                'message': 'You are not logged in'
-            })
+            Response(status=401)
 
     def reservations_confirm_arrival(self, reservation_id):
         if 'user_id' in self.app.session:
@@ -169,9 +175,7 @@ class FlaskApp:
                 'message': 'You are not an admin'
             })
         else:
-            return jsonify({
-                'message': 'You are not logged in'
-            })
+            Response(status=401)
 
     def reservations_complete(self, reservation_id):
         if 'user_id' in self.app.session:
@@ -180,9 +184,10 @@ class FlaskApp:
                 'reservation': reservation
             })
         else:
-            return jsonify({
-                'message': 'You are not logged in'
-            })
+            return Response(status=401)
+
+    def get_tables(self, date):
+        return TableController.getTables(date, self.app.session)
 
 
 if __name__ == '__main__':
