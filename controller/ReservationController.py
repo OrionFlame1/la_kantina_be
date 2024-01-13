@@ -4,8 +4,11 @@ class ReservationController:
     def getReservations():
         return ReservationService.getReservationsToday()
 
-    def createReservation(data):
-        return ReservationService.createReservation(data)
+    def createReservation(self, data):
+        return ReservationService.createReservation(self, data)
+
+    def confirmReservation(reservation_id):
+        return ReservationService.confirmReservation(reservation_id)
 
     def cancelReservation(reservation_id):
         return ReservationService.cancelReservation(reservation_id)

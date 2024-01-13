@@ -4,6 +4,9 @@ from controller.service.UserService import UserService
 
 class UserController:
 
+    def isAdmin(self):
+        return UserService.isAdmin(self)
+
     def login(data):
         return UserService.findByEmail(data)
         # return data

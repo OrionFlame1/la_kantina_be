@@ -26,3 +26,12 @@ class MailService:
             sender=(self.app.config['MAIL_USERNAME'])
         )
         self.mail.send(msg)
+
+    def sendReservationConfirmation(self, to, link):
+        msg = Message(
+            "Reservation Confirmation",
+            recipients=[to],
+            html=f"<h1>Click <a href='{link}'>here</a> to confirm your reservation</h1>",
+            sender=(self.app.config['MAIL_USERNAME'])
+        )
+        self.mail.send(msg)

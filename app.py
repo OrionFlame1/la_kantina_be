@@ -37,8 +37,8 @@ class FlaskApp:
         self.app.add_url_rule('/confirm_account/<account_id>', 'confirm_account', self.confirm_account, methods=['POST', 'GET'])
 
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
-        self.app.add_url_rule('/reservations', 'reservations_make', self.reservations_make, methods=['POST'])
-        # self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
+        self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
+        self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
         self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel, methods=['POST'])
         self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival, methods=['POST'])
         self.app.add_url_rule('/reservations/complete/<reservation_id>', 'res_complete', self.reservations_complete, methods=['POST'])
@@ -134,9 +134,6 @@ class FlaskApp:
     def reservations_make(self):
         if 'user_id' in self.app.session:
             data = request.get_json()
-            if data['user_id'] is not self.app.session['user_id']:
-                return Response(status=403)
-
             reservation = ReservationController.createReservation(data)
             return jsonify({
                 'reservation': reservation
