@@ -38,7 +38,7 @@ class FlaskApp:
 
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
         self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
-        # self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
+        self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
         self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel, methods=['POST'])
         self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival, methods=['POST'])
         self.app.add_url_rule('/reservations/complete/<reservation_id>', 'res_complete', self.reservations_complete, methods=['POST'])
@@ -159,6 +159,18 @@ class FlaskApp:
             })
         else:
             Response(status=401)
+
+    def reservations_confirm(self, reservation_id):
+        # confirm reservations only if it exists based on reservation_id
+        # don't check for admin or is the user is logged in
+        reservation = ReservationController.confirmReservation(int(reservation_id))
+        if reservation['error'] == 0:
+            return jsonify({
+                'reservation': reservation
+            })
+        return jsonify({
+            'message': reservation['message']
+        })
 
     def reservations_complete(self, reservation_id):
         if 'user_id' in self.app.session:
