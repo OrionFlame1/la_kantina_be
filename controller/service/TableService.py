@@ -7,8 +7,9 @@ class TableService:
         if date is not None:
             resultz = TableRepository.getAllTablesWithReservationsOnDate(date, isAdmin)
             array = []
-            print(resultz)
             for result in resultz:
+                if len(array) != 0 and list(filter(lambda elem: elem['id'] == result[0], array)):
+                    continue
                 if result[4] is None:
                     array.append({
                         "id": result[0],
@@ -17,16 +18,7 @@ class TableService:
                         "y": result[3]
                     })
                 else:
-                    reservations = []
-                    i = 4
-                    while i <= len(result) - 4:
-                        reservations.append({
-                            "id": result[i],
-                            "userId": result[i+1],
-                            "startDate": result[i+2],
-                            "endDate": result[i+3],
-                            "status": result[i+4]
-                        })
+                    reservations = list(map(reservationToJSON, filter(lambda elem: elem[0] == result[0], resultz)))
                     array.append({
                         "id": result[0],
                         "slots": result[1],
@@ -37,3 +29,17 @@ class TableService:
             return array
         else:
             return []
+
+
+def popTablePart(array):
+    return [i for i in array if array.index(i) >= 4]
+
+def reservationToJSON(elem):
+    return {
+        "id": elem[4],
+        "userId": elem[5],
+        "tableId": elem[6],
+        "startAt": elem[7],
+        "endAt": elem[8],
+        "status": elem[9]
+    }
