@@ -38,13 +38,14 @@ class FlaskApp:
 
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
         self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
-        self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
+        # self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
         self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel, methods=['POST'])
         self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival, methods=['POST'])
         self.app.add_url_rule('/reservations/complete/<reservation_id>', 'res_complete', self.reservations_complete, methods=['POST'])
         self.app.add_url_rule('/test_mail', 'test_mail', self.test_mail,  methods=['POST'])
 
         self.app.add_url_rule('/tables/<date>', 'get_tables', self.get_tables, methods=['GET'])
+
 
     def test_mail(self):
         data = request.get_json()
@@ -169,7 +170,7 @@ class FlaskApp:
             return Response(status=401)
 
     def get_tables(self, date):
-        return TableController.getTables(date, self.app.session)
+        return TableController.getTables(date, self.app.session, True)
 
 
 if __name__ == '__main__':
