@@ -26,6 +26,7 @@ class UserService:
 
         if id == sessionUserId:
             return {
+                "id": user[0],
                 "name": user[1],
                 "type": user[4],
                 "points": user[5],
