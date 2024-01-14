@@ -57,6 +57,21 @@ class ReservationRepository:
         db.close()
         return {'error': 0, 'message': "Reservation created successfully", 'reservation_id': cursor.lastrowid, 'email': email}
 
+    def findReservationById(id): # also sends the email of the user
+        db = Database().mydb
+        cursor = db.cursor()
+        cursor.execute(f"SELECT * FROM reservations WHERE id = {id}")
+        result = cursor.fetchone()
+        if result:
+            cursor.execute(f"SELECT email FROM accounts a JOIN reservations r WHERE a.id = r.account_id AND r.id = {id}")
+            email = cursor.fetchone()[0]
+            cursor.close()
+            db.close()
+            return {'error': 0, 'reservation': result, 'email': email}
+        cursor.close()
+        db.close()
+        return result
+
     def updateReservationStatus(reservation_id, status):
         db = Database().mydb
         cursor = db.cursor()

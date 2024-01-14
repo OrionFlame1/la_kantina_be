@@ -18,6 +18,16 @@ class ReservationService:
                 return result
             return result
 
+        def requestReservationCancellation(self, reservation_id):
+            result = ReservationRepository.findReservationById(reservation_id)
+            if result['error'] == 0:
+                url = os.getenv("BASE_URL")
+                link = url + "/reservations/cancel/" + str(reservation_id)
+                email = result['email']
+                mail = MailService(self.app).sendReservationCancellation(email, link)
+                return result
+            return result
+
         def confirmReservation(reservation_id):
             return ReservationRepository.updateReservationStatus(reservation_id, status='confirmed')
 

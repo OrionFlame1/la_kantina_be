@@ -35,3 +35,12 @@ class MailService:
             sender=(self.app.config['MAIL_USERNAME'])
         )
         self.mail.send(msg)
+
+    def sendReservationCancellation(self, to, link):
+        msg = Message(
+            "Reservation Cancellation",
+            recipients=[to],
+            html=f"<h1>Click <a href='{link}'>here</a> to cancel your reservation</h1>",
+            sender=(self.app.config['MAIL_USERNAME'])
+        )
+        self.mail.send(msg)
