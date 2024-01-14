@@ -38,13 +38,14 @@ class FlaskApp:
 
         self.app.add_url_rule('/reservations', 'reservations', self.reservations, methods=['GET'])
         self.app.add_url_rule('/reservations/make', 'reservations_make', self.reservations_make, methods=['POST'])
-        self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
+        # self.app.add_url_rule('/reservations/confirm/<reservation_id>', 'res_confirm', self.reservations_confirm)
         self.app.add_url_rule('/reservations/cancel/<reservation_id>', 'res_cancel', self.reservations_cancel, methods=['POST'])
         self.app.add_url_rule('/reservations/confirm_arrival/<reservation_id>', 'res_confirm_arrival', self.reservations_confirm_arrival, methods=['POST'])
         self.app.add_url_rule('/reservations/complete/<reservation_id>', 'res_complete', self.reservations_complete, methods=['POST'])
         self.app.add_url_rule('/test_mail', 'test_mail', self.test_mail,  methods=['POST'])
 
         self.app.add_url_rule('/tables/<date>', 'get_tables', self.get_tables, methods=['GET'])
+
 
     def test_mail(self):
         data = request.get_json()
@@ -102,6 +103,7 @@ class FlaskApp:
                 'message': register_status
             })
         return resp
+
     def confirm_account(self, account_id):
         confirm_status = UserController.confirmAccount(self, int(account_id))
         if isinstance(confirm_status, int):
@@ -127,11 +129,31 @@ class FlaskApp:
             })
         else:
             Response(status=401)
-            
+
+
+
     def reservations_make(self):
         if 'user_id' in self.app.session:
             data = request.get_json()
-            reservation = ReservationController.createReservation(self, data)
+            reservation = ReservationController.createReservation(data)
+            return jsonify({
+                'reservation': reservation
+            })
+        else:
+            Response(status=401)
+
+    def reservations_cancel(self, reservation_id):
+        if 'user_id' in self.app.session:
+            reservation = ReservationController.cancelReservation(reservation_id)
+            return jsonify({
+                'reservation': reservation
+            })
+        else:
+            Response(status=401)
+
+    def reservations_confirm_arrival(self, reservation_id):
+        if 'user_id' in self.app.session:
+            reservation = ReservationController.confirmArrival(reservation_id)
             return jsonify({
                 'reservation': reservation
             })
@@ -150,33 +172,6 @@ class FlaskApp:
             'message': reservation['message']
         })
 
-
-
-
-
-    def reservations_cancel(self, reservation_id):
-        if 'user_id' in self.app.session:
-            reservation = ReservationController.cancelReservation(reservation_id)
-            return jsonify({
-                'reservation': reservation
-            })
-        else:
-            Response(status=401)
-
-    def reservations_confirm_arrival(self, reservation_id):
-        if 'user_id' in self.app.session:
-            type = UserController.isAdmin(self)
-            if type == 'admin':
-                reservation = ReservationController.confirmArrival(reservation_id)
-                return jsonify({
-                    'reservation': reservation
-                })
-            return jsonify({
-                'message': 'You are not an admin'
-            })
-        else:
-            Response(status=401)
-
     def reservations_complete(self, reservation_id):
         if 'user_id' in self.app.session:
             reservation = ReservationController.completeReservation(reservation_id)
@@ -187,7 +182,7 @@ class FlaskApp:
             return Response(status=401)
 
     def get_tables(self, date):
-        return TableController.getTables(date, self.app.session)
+        return TableController.getTables(date, self.app.session, True)
 
 
 if __name__ == '__main__':
