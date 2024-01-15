@@ -15,7 +15,7 @@ class UserService:
             return None
 
         reservations = ReservationRepository.getReservationsByUser(id)
-        reservationsJSON = [reservation.toJSON() for reservation in reservations]
+        reservationsJSON = [reservation.toJSONWithoutAccountId() for reservation in reservations]
         result = user.withReservations(reservationsJSON)
         if id == sessionUserId:
             return result.withReservations(reservationsJSON).toJSON()
