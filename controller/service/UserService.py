@@ -1,4 +1,5 @@
 from controller.service.repository.UserRepository import UserRepository
+from models.Reservation import Reservation
 from .MailService import MailService
 import os
 
@@ -10,33 +11,16 @@ class UserService:
 
     def getUserWithReservations(id, sessionUserId):
         user = UserRepository.getUserById(id)
-        if user is None or len(user) == 0:
+        if user is None:
             return None
 
         reservations = ReservationRepository.getReservationsByUser(id)
-        reservationsJSON = []
-        for reservation in reservations:
-            reservationsJSON.append({
-                "id": reservation[0],
-                "tableId": reservation[2],
-                "startDate": reservation[3],
-                "endDate": reservation[4],
-                "status": reservation[5]
-            })
-
+        reservationsJSON = [reservation.toJSONWithoutAccountId() for reservation in reservations]
+        result = user.withReservations(reservationsJSON)
         if id == sessionUserId:
-            return {
-                "id": user[0],
-                "name": user[1],
-                "type": user[4],
-                "points": user[5],
-                "reservations": reservationsJSON
-            }
+            return result.withReservations(reservationsJSON).toJSON()
         else:
-            return {
-                "name": user[1],
-                "reservations": reservationsJSON
-            }
+            return result.withReservations(reservationsJSON).toJSONWithNameAndReservation()
 
     def findByEmail(data):
         result = UserRepository.validateLogin(data)

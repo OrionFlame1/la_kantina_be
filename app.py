@@ -125,9 +125,7 @@ class FlaskApp:
     def reservations(self):
         if 'user_id' in self.app.session:
             reservations = ReservationController.getReservations()
-            return jsonify({
-                'reservations': reservations
-            })
+            return jsonify(reservations)
         else:
             Response(status=401)
 

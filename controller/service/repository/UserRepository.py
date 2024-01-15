@@ -1,3 +1,4 @@
+from models.User import User
 from .db import Database
 import hashlib
 
@@ -17,11 +18,9 @@ class UserRepository:
         db = Database().mydb
         cursor = db.cursor()
 
-        try:
-            cursor.execute(f"SELECT * FROM accounts WHERE id = {id}")
-            return cursor.fetchone()
-        except:
-            return None
+        cursor.execute(f"SELECT * FROM accounts WHERE id = {id}")
+        result = cursor.fetchone()
+        return User(result[0], result[1], result[2], result[4], result[5]) if result else None
 
     def validateLogin(data):
         db = Database().mydb
