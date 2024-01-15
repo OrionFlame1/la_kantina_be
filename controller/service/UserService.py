@@ -11,14 +11,11 @@ class UserService:
 
     def getUserWithReservations(id, sessionUserId):
         user = UserRepository.getUserById(id)
-        if user is None or len(user) == 0:
+        if user is None:
             return None
 
         reservations = ReservationRepository.getReservationsByUser(id)
-        reservationsJSON = []
-        for reservation in reservations:
-            reservationsJSON.append(Reservation(reservation[0], reservation[1], reservation[2], reservation[3], reservation[4], reservation[5]).toJSONWithoutAccountId())
-
+        reservationsJSON = [reservation.toJSON() for reservation in reservations]
         result = user.withReservations(reservationsJSON)
         if id == sessionUserId:
             return result.withReservations(reservationsJSON).toJSON()

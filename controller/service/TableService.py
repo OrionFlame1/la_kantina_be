@@ -1,5 +1,6 @@
 from controller.service.repository.TableRepository import TableRepository
-from models import Table, Reservation
+from models.Reservation import Reservation
+from models.Table import Table
 
 
 class TableService:

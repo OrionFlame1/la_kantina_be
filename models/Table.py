@@ -1,11 +1,11 @@
 class Table:
 
-    def __init__(self, id, x, y, slots, reservations):
+    def __init__(self, id, x, y, slots, reservations=[]):
         self.id = id
         self.x = x
         self.y = y
         self.slots = slots
-        self.reservations = [] if reservations is None else reservations
+        self.reservations = reservations
 
     def toJSON(self):
         return {

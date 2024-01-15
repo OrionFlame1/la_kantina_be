@@ -1,11 +1,11 @@
 class User:
 
-    def __init__(self, id, name, role, points, reservations):
+    def __init__(self, id, name, role, points, reservations=[]):
         self.id = id
         self.name = name
         self.role = role
         self.points = points
-        self.reservations = [] if reservations is None else reservations
+        self.reservations = reservations
 
     def toJSON(self):
         return {

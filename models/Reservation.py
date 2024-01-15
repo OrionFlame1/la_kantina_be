@@ -1,12 +1,13 @@
 class Reservation:
 
-    def __init__(self, id, accountId, tableId, startAt, endAt, status):
+    def __init__(self, id, accountId, tableId, startAt, endAt, status, feedback=None):
         self.id = id
         self.accountId = accountId
         self.tableId = tableId
         self.startAt = startAt
         self.endAt = endAt
         self.status = status
+        self.feedback = feedback
 
     def toJSON(self):
         return {
@@ -24,7 +25,8 @@ class Reservation:
             "tableId": self.tableId,
             "startAt": self.startAt,
             "endAt": self.endAt,
-            "status": self.status
+            "status": self.status,
+            "feedback": self.feedback
         }
     
     def toJSONWithoutTableId(self):
