@@ -1,3 +1,4 @@
+from models.User import User
 from .db import Database
 import hashlib
 
@@ -19,7 +20,8 @@ class UserRepository:
 
         try:
             cursor.execute(f"SELECT * FROM accounts WHERE id = {id}")
-            return cursor.fetchone()
+            result = cursor.fetchone()
+            return User(result[0]. result[1], result[2], result[4], result[5])
         except:
             return None
 

@@ -14,15 +14,7 @@ class TableService:
                 if result[4] is None:
                     array.append(Table(result[0], result[1], result[2], result[3]).toJSON())
                 else:
-                    # reservations = list(map(reservationToJSONWithoutTableId, filter(lambda elem: elem[0] == result[0], resultz)))
-                    reservations = list(map(lambda elemm: Reservation(elemm[4], elemm[5], elemm[6], elemm[7], elemm[8], elemm[9]).toJSONWithoutTableId(), filter(lambda elem: elem[0] == result[0], resultz)))
-                    # array.append({
-                    #     "id": result[0],
-                    #     "slots": result[1],
-                    #     "x": result[2],
-                    #     "y": result[3],
-                    #     "reservations": reservations
-                    # })
+                    reservations = list(map(reservationToJSONWithoutTableId, filter(lambda elem: elem[0] == result[0], resultz)))
                     array.append(Table(result[0], result[1], result[2], result[3], reservations).toJSON())
             return array
         else:
@@ -32,5 +24,5 @@ class TableService:
 def popTablePart(array):
     return [i for i in array if array.index(i) >= 4]
 
-# def reservationToJSONWithoutTableId(elem):
-#     return Reservation(elem[4], elem[5], elem[6], elem[7], elem[8], elem[9]).toJSONWithoutTableId()
+def reservationToJSONWithoutTableId(elem):
+    return Reservation(elem[4], elem[5], elem[6], elem[7], elem[8], elem[9]).toJSONWithoutTableId()
