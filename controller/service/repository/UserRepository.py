@@ -65,7 +65,7 @@ class UserRepository:
             cursor.close()
             db.close()
             return {'error': 1, 'message': "Account not found"}
-        cursor.execute(f"UPDATE accounts SET type = 'customer' WHERE id = {account_id}")
+        cursor.execute(f"UPDATE accounts SET type = 'user' WHERE id = {account_id}")
         db.commit()
         cursor.close()
         db.close()
